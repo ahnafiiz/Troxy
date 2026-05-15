@@ -4,7 +4,7 @@ let inFrame;
 
 try {
   inFrame = window !== top;
-} catch (e) {
+} catch {
   inFrame = true;
 }
 
@@ -12,15 +12,23 @@ if (!localStorage.getItem("ab")) {
   localStorage.setItem("ab", "true");
 }
 
-if (!inFrame && !navigator.userAgent.includes("Firefox") && localStorage.getItem("ab") === "true") {
+if (!inFrame && !navigator.userAgent.includes("Firefox") && localStorage.getItem("ab") === "true" && !localStorage.getItem("waitModalShown") && !sessionStorage.getItem("waitModalShown")) {
   const popup = open("about:blank", "_blank");
 
   setTimeout(() => {
     // Popup blocked
     if (!popup || popup.closed) {
-      const overlay = document.createElement("div");
+      // only show the blocked-popup modal once per browser (user can re-enable by clearing storage)
+      if (!localStorage.getItem("waitModalShown") && !sessionStorage.getItem("waitModalShown")) {
+        try {
+          localStorage.setItem("waitModalShown", "true");
+        } catch {}
+        try {
+          sessionStorage.setItem("waitModalShown", "true");
+        } catch {}
+        const overlay = document.createElement("div");
 
-      overlay.innerHTML = `
+        overlay.innerHTML = `
         <div id="waitModal">
           <div id="waitBox">
 
@@ -45,9 +53,9 @@ if (!inFrame && !navigator.userAgent.includes("Firefox") && localStorage.getItem
         </div>
       `;
 
-      const styleEl = document.createElement("style");
+        const styleEl = document.createElement("style");
 
-      styleEl.textContent = `
+        styleEl.textContent = `
         #waitModal {
           position: fixed;
           inset: 0;
@@ -240,31 +248,37 @@ if (!inFrame && !navigator.userAgent.includes("Firefox") && localStorage.getItem
         }
       `;
 
-      document.head.appendChild(styleEl);
-      document.body.appendChild(overlay);
+        document.head.appendChild(styleEl);
+        document.body.appendChild(overlay);
 
-      const okBtn = document.getElementById("okBtn");
+        const okBtn = document.getElementById("okBtn");
 
-      let seconds = 5;
+        let seconds = 5;
 
-      const timer = setInterval(() => {
-        seconds--;
+        const timer = setInterval(() => {
+          seconds--;
 
-        if (seconds > 0) {
-          okBtn.textContent = `Continue (${seconds})`;
-        } else {
-          clearInterval(timer);
+          if (seconds > 0) {
+            okBtn.textContent = `Continue (${seconds})`;
+          } else {
+            clearInterval(timer);
 
-          okBtn.disabled = false;
-          okBtn.classList.add("enabled");
+            okBtn.disabled = false;
+            okBtn.classList.add("enabled");
 
-          okBtn.textContent = "Continue";
-        }
-      }, 1000);
+            okBtn.textContent = "Continue";
+          }
+        }, 1000);
 
-      okBtn.addEventListener("click", () => {
-        overlay.remove();
-      });
+        okBtn.addEventListener("click", () => {
+          overlay.remove();
+          try {
+            localStorage.setItem("waitModalShown", "true");
+          } catch (e) {
+            // ignore storage errors
+          }
+        });
+      }
     } else {
       // Popup worked
       const doc = popup.document;
@@ -466,7 +480,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Splash texts
 
-const SplashT = ["Over 8 Million Users since 2026 (totally not made up)", "Made for Troy-OS", "Thanks for using the site", "Castletroy College really sucks", "fug u senso", "Check out the settings page"];
+const SplashT = ["Over 3246238643824983274 Million Users since 2026", "Made for Troy-OS", "Thanks for using the site", "Castletroy College really sucks", "fug u senso", "Check out the settings page"];
 
 let SplashI = Math.floor(Math.random() * SplashT.length);
 

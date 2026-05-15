@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const selectedOption = localStorage.getItem("selectedOption");
   if (selectedOption) {
-    updateHeadSection(selectedOption);
+    updateHeadSection();
   }
 });
 
@@ -119,6 +119,7 @@ function saveEventKey() {
   // biome-ignore lint: idk
   window.location = window.location;
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   const dropdown = document.getElementById("dropdown");
   if (dropdown) {
@@ -162,6 +163,7 @@ function CustomName() {
   console.log("saveName function called with name value:", nameValue);
   localStorage.setItem("CustomName", nameValue);
 }
+
 function ResetCustomCloak() {
   localStorage.removeItem("CustomName");
   localStorage.removeItem("CustomIcon");
@@ -186,12 +188,13 @@ function redirectToMainDomain() {
   } else window.location.href = mainDomainUrl + window.location.pathname;
 }
 
-document.addEventListener("DOMContentLoaded", event => {
-  const icon = document.getElementById("tab-favicon");
-  const name = document.getElementById("t");
+document.addEventListener("DOMContentLoaded", () => {
   const selectedValue = localStorage.getItem("selectedOption") || "Default";
-  document.getElementById("dropdown").value = selectedValue;
-  updateHeadSection(selectedValue);
+  const dropdownElement = document.getElementById("dropdown");
+  if (dropdownElement) {
+    dropdownElement.value = selectedValue;
+  }
+  updateHeadSection();
 });
 
 function handleDropdownChange(selectElement) {
@@ -199,45 +202,85 @@ function handleDropdownChange(selectElement) {
   localStorage.removeItem("CustomName");
   localStorage.removeItem("CustomIcon");
   localStorage.setItem("selectedOption", selectedValue);
-  updateHeadSection(selectedValue);
+  updateHeadSection();
   redirectToMainDomain(selectedValue);
 }
 
-function updateHeadSection(selectedValue) {
+function updateHeadSection() {
   const icon = document.getElementById("tab-favicon");
   const name = document.getElementById("t");
   const customName = localStorage.getItem("CustomName");
   const customIcon = localStorage.getItem("CustomIcon");
 
   if (customName && customIcon) {
-    name.textContent = customName;
-    icon.setAttribute("href", customIcon);
+    if (name) {
+      name.textContent = customName;
+    }
+    if (icon) {
+      icon.setAttribute("href", customIcon);
+    }
     localStorage.setItem("name", customName);
     localStorage.setItem("icon", customIcon);
   }
 }
+
 // Custom Background
 document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("save-button");
   const backgroundInput = document.getElementById("background-input");
   const resetButton = document.getElementById("reset-button");
 
-  saveButton.addEventListener("click", () => {
-    const imageURL = backgroundInput.value;
-    if (imageURL.trim() !== "") {
-      localStorage.setItem("backgroundImage", imageURL);
-      document.body.style.backgroundImage = `url('${imageURL}')`;
-      backgroundInput.value = "";
-    } else {
-      console.log("No image URL entered.");
-    }
-  });
+  // apply saved wallpaper if present
+  const savedWallpaper = localStorage.getItem("backgroundImage");
+  if (savedWallpaper) {
+    document.documentElement.style.setProperty("--background-image", `url('${savedWallpaper}')`);
+    document.body.style.backgroundImage = `url('${savedWallpaper}')`;
+  } else {
+    // no saved wallpaper: try fetching wallpapers from the GitHub repo and apply the first one
+    (async () => {
+      try {
+        const resp = await fetch("https://api.github.com/repos/ahnafiiz/TroyOS/contents/public/wallpapers");
+        if (!resp.ok) return;
+        const list = await resp.json();
+        const imgs = list.filter(i => i.type === "file" && /\.(jpe?g|png|webp|gif)$/i.test(i.name));
+        if (imgs.length) {
+          const defaultUrl = imgs[0].download_url;
+          localStorage.setItem("backgroundImage", defaultUrl);
+          localStorage.setItem("wallpaperList", JSON.stringify(imgs.map(i => i.download_url)));
+          document.documentElement.style.setProperty("--background-image", `url('${defaultUrl}')`);
+          document.body.style.backgroundImage = `url('${defaultUrl}')`;
+        }
+      } catch (error) {
+        console.warn("Could not fetch wallpapers from GitHub:", error);
+      }
+    })();
+  }
 
-  resetButton.addEventListener("click", () => {
-    localStorage.removeItem("backgroundImage");
-    document.body.style.backgroundImage = "url('default-background.jpg')";
-    window.location.reload();
-  });
+  if (saveButton) {
+    saveButton.addEventListener("click", () => {
+      const imageURL = backgroundInput.value;
+      if (imageURL.trim() !== "") {
+        localStorage.setItem("backgroundImage", imageURL);
+        // set CSS variable so all pages/styles use the wallpaper
+        document.documentElement.style.setProperty("--background-image", `url('${imageURL}')`);
+        // also set inline background for immediate effect in older browsers
+        document.body.style.backgroundImage = `url('${imageURL}')`;
+        backgroundInput.value = "";
+      } else {
+        console.log("No image URL entered.");
+      }
+    });
+  }
+
+  if (resetButton) {
+    resetButton.addEventListener("click", () => {
+      localStorage.removeItem("backgroundImage");
+      // reset CSS variable to default wallpaper
+      document.documentElement.style.setProperty("--background-image", 'url("https://cdn.jsdelivr.net/gh/Troy-OS/public@main/wallpapers/Stock-1.jpg")');
+      document.body.style.backgroundImage = "";
+      window.location.reload();
+    });
+  }
 });
 
 // Particles
@@ -263,7 +306,7 @@ function AB() {
 
   try {
     inFrame = window !== top;
-  } catch (e) {
+  } catch {
     inFrame = true;
   }
 
@@ -318,6 +361,7 @@ function toggleAB() {
     localStorage.setItem("ab", "true");
   }
 }
+
 // Search Engine
 function EngineChange(dropdown) {
   const selectedEngine = dropdown.value;
@@ -351,7 +395,7 @@ function SaveEngine() {
 document.addEventListener("DOMContentLoaded", () => {
   const selectedEngineName = localStorage.getItem("enginename");
   const dropdown = document.getElementById("engine");
-  if (selectedEngineName) {
+  if (selectedEngineName && dropdown) {
     dropdown.value = selectedEngineName;
   }
 });
@@ -427,6 +471,7 @@ function importSaveData() {
         const data = JSON.parse(e.target.result);
         if (data.cookies) {
           Object.entries(data.cookies).forEach(([key, value]) => {
+            // biome-ignore lint/suspicious/noDocumentCookie: Required for import/export functionality
             document.cookie = `${key}=${value}; path=/`;
           });
         }
@@ -442,9 +487,27 @@ function importSaveData() {
         alert("If you find any issues then report it in GitHub or contact Troxy support.");
       } catch (error) {
         console.error("Error parsing JSON file:", error);
+        alert("Failed to import save data. Please check the file format.");
       }
     };
     reader.readAsText(file);
   };
   input.click();
 }
+
+// Expose functions to global window object for use in HTML
+window.saveEventKey = saveEventKey;
+window.saveIcon = saveIcon;
+window.saveName = saveName;
+window.CustomIcon = CustomIcon;
+window.CustomName = CustomName;
+window.ResetCustomCloak = ResetCustomCloak;
+window.redirectToMainDomain = redirectToMainDomain;
+window.handleDropdownChange = handleDropdownChange;
+window.updateHeadSection = updateHeadSection;
+window.AB = AB;
+window.toggleAB = toggleAB;
+window.EngineChange = EngineChange;
+window.SaveEngine = SaveEngine;
+window.exportSaveData = exportSaveData;
+window.importSaveData = importSaveData;

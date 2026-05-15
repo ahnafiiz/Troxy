@@ -1,89 +1,41 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 
 :root {
-   /* Background Variables */
-   --background-image: url("https://cdn.jsdelivr.net/gh/Troy-OS/public@main/wallpapers/Stock-1.jpg"); /* Background Image */
-   --backdrop-filter: blur(10px) brightness(80%); /* Nav Backdrop filter */
-   --background-nav: rgba(255, 255, 255, 0.02); /* Nav Background */
-   --background-color: #222; /* Main Background Color */
-   --background-input: #4545459e; /* Input Field Background Color */
-   --background-column: #353535; /* Background for Apps Container */
-   --background-settings: #2a2a2a; /* Settings Card Background */
-   --background-buttons: #333; /* Button Background Color */
-   --tab-active-background: #444; /* Accent Color for Tabs */
-   --tab-inactive-background: ; /* Background Color for Tabs Not In Use */
-   --slider-active-background: #4caf50; /* Active Slider Background Color */
-   --slider-inactive-background: #ccc; /*  Slider Background Color */
-   --nav-image: url("https://cdn.jsdelivr.net/gh/Troy-OS/public@main/assets/media/favicon/main.png"); /* Nav Logo */
-   /* Text Variables */
-   --text-primary: #fff; /* Primary Text Color */
-   --text-dark: #555; /* Dark Text Color for Error Page, Scrollbar, and Particles */
-   --text-placeholder: #aaa; /* Placeholder Text Color */
-   /* Other Variables */
-   --save-button: #4caf50; /* Save Button, Typically Green */
-   --reset-button: #f44336; /* Reset Button, Typically Red */
-   --import-button: #009688; /* Import Button, Typically Teal */
-   --export-button: #ea76cb; /* Export Button, Typically Pink */
+   --background-base: #050816;
+   --background-image: url("https://cdn.jsdelivr.net/gh/Troy-OS/public@main/wallpapers/Stock-1.jpg");
+   --background-overlay: rgba(7, 13, 29, 0.88);
+   --surface: rgba(11, 20, 38, 0.82);
+   --surface-strong: rgba(11, 20, 38, 0.92);
+   --surface-soft: rgba(255, 255, 255, 0.06);
+   --surface-border: rgba(255, 255, 255, 0.12);
+   --accent: #78a7ff;
+   --accent-soft: rgba(120, 167, 255, 0.18);
+   --text-primary: #f7fbff;
+   --text-secondary: #b9ccf5;
+   --text-muted: #8ea5cd;
+   --shadow: 0 28px 90px rgba(0, 0, 0, 0.35);
+   --radius: 28px;
+   --transition: 240ms ease;
 }
 
-::-webkit-scrollbar {
-   width: 6px;
-   background-color: var(--background-color);
-}
-
-::-webkit-scrollbar-track {
-   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-   border-radius: 10px;
-   background-color: var(--background-color);
-}
-
-::-webkit-scrollbar-thumb {
-   border-radius: 10px;
-   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-   background-color: var(--text-primary);
-}
-
-::-webkit-scrollbar-thumb:hover {
-   background-color: var(--text-dark);
-}
-
-body {
-   font-family: "Inter", sans-serif;
-   text-decoration: none;
-   background: var(--background-image);
-   height: 100%;
-   background-position: center;
-   background-repeat: no-repeat;
-   background-size: cover;
-   background-attachment: fixed;
-}
-
-::placeholder {
-   color: var(--text-placeholder);
-   opacity: 1;
-}
-
-.main {
-   letter-spacing: 0;
-   font-family: "Inter", sans-serif;
-   width: 100%;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   padding: 4rem 0 6rem;
+* {
    box-sizing: border-box;
-   min-height: 100vh;
-   position: relative;
-   z-index: 1;
+}
+
+html {
+   scroll-behavior: smooth;
 }
 
 body {
-   color: var(--text-primary);
    margin: 0;
    min-height: 100vh;
-   position: relative;
+   font-family: "Inter", sans-serif;
+   color: var(--text-primary);
+   background-image: var(--background-image);
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
    overflow-x: hidden;
 }
 
@@ -91,29 +43,61 @@ body::before {
    content: "";
    position: fixed;
    inset: 0;
-   background: linear-gradient(180deg, rgba(4, 11, 30, 0.88), rgba(7, 13, 31, 0.92) 45%, rgba(6, 11, 27, 0.96));
-   opacity: 0.95;
+   background: linear-gradient(180deg, rgba(4, 8, 20, 0.28), rgba(6, 10, 24, 0.32));
    pointer-events: none;
-   z-index: 0;
+   z-index: -1;
+}
+
+::placeholder {
+   color: var(--text-muted);
+   opacity: 1;
+}
+
+::-webkit-scrollbar {
+   width: 8px;
+}
+
+::-webkit-scrollbar-track {
+   background: rgba(255, 255, 255, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+   background: rgba(255, 255, 255, 0.16);
+   border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+   background: rgba(255, 255, 255, 0.24);
+}
+
+.main {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding: 4rem 1rem 6rem;
+   min-height: 100vh;
+   position: relative;
+   z-index: 1;
 }
 
 .title {
    font-size: clamp(3.5rem, 9vw, 6.5rem);
-   text-transform: uppercase;
    letter-spacing: 0.18em;
    margin: 0;
-   color: #ffffff;
+   color: var(--text-primary);
    text-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
 }
 
 .search-container {
    width: min(860px, 92vw);
    margin-top: 2rem;
-   background: rgba(12, 18, 36, 0.82);
+   background: rgba(13, 22, 45, 0.84);
    border: 1px solid rgba(255, 255, 255, 0.08);
    border-radius: 34px;
-   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.22);
-   backdrop-filter: blur(20px);
+   box-shadow: var(--shadow);
+   backdrop-filter: blur(24px);
    padding: 2rem;
 }
 
@@ -127,13 +111,13 @@ select {
    border-radius: 18px;
    padding: 1rem 1.2rem;
    font-size: 1rem;
-   color: #ffffff;
+   color: var(--text-primary);
    background: rgba(255, 255, 255, 0.05);
    outline: none;
    transition:
-      border-color 0.25s ease,
-      transform 0.25s ease,
-      box-shadow 0.25s ease;
+      border-color var(--transition),
+      transform var(--transition),
+      box-shadow var(--transition);
 }
 
 .search-container input:focus,
@@ -141,8 +125,8 @@ select {
 .input-c select:focus,
 .key-form:focus,
 select:focus {
-   border-color: rgba(96, 144, 255, 0.65);
-   box-shadow: 0 0 0 6px rgba(96, 144, 255, 0.14);
+   border-color: rgba(120, 167, 255, 0.75);
+   box-shadow: 0 0 0 6px rgba(120, 167, 255, 0.14);
    transform: translateY(-1px);
 }
 
@@ -154,80 +138,81 @@ select:focus {
    gap: 1rem;
    flex-wrap: wrap;
    justify-content: center;
-   align-items: center;
+   align-items: stretch;
 }
 
 .apps,
 .pinned {
    width: min(1240px, 92vw);
    display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-   gap: 1.25rem;
+   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+   gap: 1.5rem;
    margin: 0 auto;
    padding: 0 0 2rem;
 }
 
 .column {
-   background: rgba(255, 255, 255, 0.06);
+   background: rgba(11, 18, 34, 0.86);
    border: 1px solid rgba(255, 255, 255, 0.08);
    border-radius: 28px;
-   padding: 1.2rem;
-   min-height: 220px;
+   padding: 1.4rem;
+   min-height: 260px;
    display: flex;
    flex-direction: column;
    align-items: center;
-   gap: 0.9rem;
+   gap: 1rem;
    transition:
       transform 0.25s ease,
       border-color 0.25s ease,
       box-shadow 0.25s ease;
+   backdrop-filter: blur(20px);
 }
 
 .column:hover {
-   transform: translateY(-4px);
-   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
-   border-color: rgba(96, 144, 255, 0.28);
+   transform: translateY(-6px);
+   box-shadow: 0 26px 60px rgba(33, 53, 106, 0.28);
+   border-color: rgba(120, 167, 255, 0.2);
 }
 
 .column img {
-   width: 108px;
-   height: 108px;
+   width: 100%;
+   height: 180px;
    object-fit: contain;
    border-radius: 22px;
-   background: rgba(255, 255, 255, 0.08);
+   background: rgba(255, 255, 255, 0.06);
 }
 
 .column p {
    margin: 0;
    font-size: 0.95rem;
    text-align: center;
-   line-height: 1.4;
-   color: #f5f8ff;
+   line-height: 1.5;
+   color: rgba(229, 240, 255, 0.94);
 }
 
 .settings-container {
    width: min(1240px, 94vw);
    display: grid;
-   gap: 1.25rem;
+   gap: 1.5rem;
    padding: 2rem 0;
 }
 
 .settings-card {
-   background: rgba(255, 255, 255, 0.05);
+   background: rgba(13, 21, 38, 0.88);
    border: 1px solid rgba(255, 255, 255, 0.08);
    border-radius: 28px;
-   padding: 1.6rem;
-   box-shadow: 0 26px 70px rgba(0, 0, 0, 0.16);
+   padding: 1.8rem;
+   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.18);
 }
 
 .settings-card h3 {
    margin-top: 0;
-   font-size: 1.2rem;
-   color: #ffffff;
+   font-size: clamp(1.25rem, 1.6vw, 1.55rem);
+   color: var(--text-primary);
 }
 
 .settings-card p {
-   color: rgba(255, 255, 255, 0.76);
+   color: rgba(255, 255, 255, 0.72);
 }
 
 .key-button,
@@ -238,17 +223,19 @@ button {
    font-size: 0.95rem;
    font-weight: 700;
    cursor: pointer;
-   background: rgba(96, 144, 255, 0.95);
-   color: #ffffff;
+   background: linear-gradient(135deg, rgba(96, 144, 255, 0.95), rgba(139, 192, 255, 0.95));
+   color: #060b18;
    transition:
       transform 0.2s ease,
-      box-shadow 0.2s ease;
+      box-shadow 0.2s ease,
+      filter 0.2s ease;
 }
 
 .key-button:hover,
 button:hover {
    transform: translateY(-1px);
-   box-shadow: 0 14px 28px rgba(96, 144, 255, 0.25);
+   box-shadow: 0 18px 34px rgba(84, 129, 255, 0.28);
+   filter: brightness(1.03);
 }
 
 a {
@@ -274,6 +261,6 @@ a:hover {
       align-items: stretch;
    }
    .column {
-      min-height: 200px;
+      min-height: 220px;
    }
 }

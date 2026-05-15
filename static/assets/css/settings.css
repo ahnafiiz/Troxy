@@ -1,5 +1,5 @@
 body {
-   background-color: var(--background-image);
+   background: transparent;
    font-family: "Inter", sans-serif;
    color: var(--text-primary);
    margin: 0;
