@@ -1,19 +1,15 @@
 // Ads
 // settings.js
+// Ads Disabled
 document.addEventListener("DOMContentLoaded", () => {
-  function adChange(selectedValue) {
-    if (selectedValue === "default") {
-      localStorage.setItem("ads", "on");
-    } else if (selectedValue === "popups") {
-      localStorage.setItem("ads", "popups");
-    } else if (selectedValue === "off") {
-      localStorage.setItem("ads", "off");
-    }
-  }
+  localStorage.setItem("ads", "off");
 
   const adTypeElement = document.getElementById("adType");
 
   if (adTypeElement) {
+    adTypeElement.value = "off";
+    adTypeElement.disabled = true;
+
     adTypeElement.addEventListener("change", function () {
       const selectedOption = this.value;
       adChange(selectedOption);
@@ -30,16 +26,23 @@ document.addEventListener("DOMContentLoaded", () => {
       adTypeElement.value = "default";
     }
   }
+
   // Makes the custom icon and name persistent
   const iconElement = document.getElementById("icon");
   const nameElement = document.getElementById("name");
   const customIcon = localStorage.getItem("CustomIcon");
   const customName = localStorage.getItem("CustomName");
-  iconElement.value = customIcon;
-  nameElement.value = customName;
 
-  if (localStorage.getItem("ab") === "true") {
-    document.getElementById("ab-settings-switch").checked = true;
+  if (iconElement) {
+    iconElement.value = customIcon || "";
+  }
+  if (nameElement) {
+    nameElement.value = customName || "";
+  }
+
+  const abSettingsSwitch = document.getElementById("ab-settings-switch");
+  if (localStorage.getItem("ab") === "true" && abSettingsSwitch) {
+    abSettingsSwitch.checked = true;
   }
 });
 
@@ -74,8 +77,22 @@ let eventKeyRaw = localStorage.getItem("eventKeyRaw") || "`";
 let pLink = localStorage.getItem("pLink") || "https://classroom.google.com/";
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("eventKeyInput").value = eventKeyRaw;
-  document.getElementById("linkInput").value = pLink;
+  const eventKeyInput = document.getElementById("eventKeyInput");
+  const linkInput = document.getElementById("linkInput");
+
+  if (eventKeyInput) {
+    eventKeyInput.value = eventKeyRaw;
+    eventKeyInput.addEventListener("input", () => {
+      eventKey = eventKeyInput.value.split(",");
+    });
+  }
+
+  if (linkInput) {
+    linkInput.value = pLink;
+    linkInput.addEventListener("input", () => {
+      pLink = linkInput.value;
+    });
+  }
 
   const selectedOption = localStorage.getItem("selectedOption");
   if (selectedOption) {
@@ -83,37 +100,40 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-const eventKeyInput = document.getElementById("eventKeyInput");
-eventKeyInput.addEventListener("input", () => {
-  eventKey = eventKeyInput.value.split(",");
-});
-
-const linkInput = document.getElementById("linkInput");
-linkInput.addEventListener("input", () => {
-  pLink = linkInput.value;
-});
-
 function saveEventKey() {
-  eventKey = eventKeyInput.value.split(",");
-  eventKeyRaw = eventKeyInput.value;
+  const eventKeyInput = document.getElementById("eventKeyInput");
+  const linkInput = document.getElementById("linkInput");
+
+  if (eventKeyInput) {
+    eventKey = eventKeyInput.value.split(",");
+    eventKeyRaw = eventKeyInput.value;
+  }
+
+  if (linkInput) {
+    pLink = linkInput.value;
+  }
+
   localStorage.setItem("eventKey", JSON.stringify(eventKey));
   localStorage.setItem("pLink", pLink);
   localStorage.setItem("eventKeyRaw", eventKeyRaw);
   // biome-ignore lint: idk
   window.location = window.location;
 }
-const dropdown = document.getElementById("dropdown");
-const options = dropdown.getElementsByTagName("option");
+document.addEventListener("DOMContentLoaded", () => {
+  const dropdown = document.getElementById("dropdown");
+  if (dropdown) {
+    const options = dropdown.getElementsByTagName("option");
+    const sortedOptions = Array.from(options).sort((a, b) => a.textContent.localeCompare(b.textContent));
 
-const sortedOptions = Array.from(options).sort((a, b) => a.textContent.localeCompare(b.textContent));
+    while (dropdown.firstChild) {
+      dropdown.removeChild(dropdown.firstChild);
+    }
 
-while (dropdown.firstChild) {
-  dropdown.removeChild(dropdown.firstChild);
-}
-
-for (const option of sortedOptions) {
-  dropdown.appendChild(option);
-}
+    for (const option of sortedOptions) {
+      dropdown.appendChild(option);
+    }
+  }
+});
 
 function saveIcon() {
   const iconElement = document.getElementById("icon");
@@ -223,21 +243,20 @@ document.addEventListener("DOMContentLoaded", () => {
 // Particles
 const switches = document.getElementById("2");
 
-if (window.localStorage.getItem("particles") !== "") {
-  if (window.localStorage.getItem("particles") === "true") {
-    switches.checked = true;
-  } else {
-    switches.checked = false;
+if (switches) {
+  if (window.localStorage.getItem("particles") !== "") {
+    switches.checked = window.localStorage.getItem("particles") === "true";
   }
+
+  switches.addEventListener("change", event => {
+    if (event.currentTarget.checked) {
+      window.localStorage.setItem("particles", "true");
+    } else {
+      window.localStorage.setItem("particles", "false");
+    }
+  });
 }
 
-switches.addEventListener("change", event => {
-  if (event.currentTarget.checked) {
-    window.localStorage.setItem("particles", "true");
-  } else {
-    window.localStorage.setItem("particles", "false");
-  }
-});
 // AB Cloak
 function AB() {
   let inFrame;
@@ -290,7 +309,7 @@ function AB() {
 }
 
 function toggleAB() {
-  ab = localStorage.getItem("ab");
+  const ab = localStorage.getItem("ab");
   if (!ab) {
     localStorage.setItem("ab", "true");
   } else if (ab === "true") {
@@ -420,7 +439,7 @@ function importSaveData() {
           }
         }
         alert("Your save data has been imported. Please test it out.");
-        alert("If you find any issues then report it in GitHub or the Interstellar Discord.");
+        alert("If you find any issues then report it in GitHub or contact Troxy support.");
       } catch (error) {
         console.error("Error parsing JSON file:", error);
       }

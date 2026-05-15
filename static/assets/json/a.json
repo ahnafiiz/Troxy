@@ -6,7 +6,7 @@
     "custom": "true"
   },
   {
-    "name": "! Interstellar FAQ/Docs",
+    "name": "! Troxy FAQ/Docs",
     "image": "/assets/media/icons/help_center_googlefonts.png",
     "link": "https://docs.gointerstellar.app",
     "categories": ["all"]
@@ -371,9 +371,10 @@
   },
   {
     "name": "Snapchat",
+    "link": "https://web.snapchat.com/",
     "image": "/assets/media/icons/snap.webp",
     "categories": ["all", "social", "message"],
-    "error": "true"
+    "blank": "true"
   },
   {
     "name": "W3Schools",

@@ -1,21 +1,27 @@
 :root {
    /* Background Variables */
-   --background-image: url("/./assets/media/background/full-main.png"); /* Background Image */
-   --backdrop-filter: blur(10px) brightness(80%); /* Nav Backdrop filter */
-   --background-nav: #173055; /* Nav Background */
-   --background-color: #173055; /* Main Background Color */
-   --background-input: #4a6fa5; /* Input Field Background Color */
-   --background-column: #173055; /* Background for Apps Container */
-   --background-settings: #173055; /* Settings Card Background */
-   --background-buttons: #3665ac; /* Button Background Color */
-   --tab-active-background: #204a88; /* Accent Color for Tabs */
-   --slider-active-background: #204a88; /* Active Slider Background Color */
-   --slider-inactive-background: #204a88; /* Slider Background Color */
-   --nav-image: url("/./assets/media/favicon/main.png"); /* Nav Logo */
+   --background-image: url("https://cdn.jsdelivr.net/gh/Troy-OS/public@main/wallpapers/Stock-1.jpg");
+
+   --backdrop-filter: blur(10px) brightness(80%);
+
+   --background-nav: #173055;
+   --background-color: #173055;
+   --background-input: #4a6fa5;
+   --background-column: #173055;
+   --background-settings: #173055;
+   --background-buttons: #3665ac;
+
+   --tab-active-background: #204a88;
+   --slider-active-background: #204a88;
+   --slider-inactive-background: #204a88;
+
+   --nav-image: url("https://cdn.jsdelivr.net/gh/user/theme-assets/assets/media/favicon/main.png");
+
    /* Text Variables */
-   --text-primary: #ffffff; /* Primary Text Color */
-   --text-dark: #1b50cc; /* Dark Text Color for Error Page, Scrollbar, and Particles */
-   --text-placeholder: #00d9ff; /* Placeholder Text Color */
+   --text-primary: #ffffff;
+   --text-dark: #1b50cc;
+   --text-placeholder: #00d9ff;
+
    /* Other Variables */
-   --tab-hover: #a05959; /* Tab Color on Hover */
+   --tab-hover: #a05959;
 }
