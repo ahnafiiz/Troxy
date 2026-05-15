@@ -1,3 +1,15 @@
+/* Add body background styles */
+body {
+   background-image: var(--background-image, url("https://cdn.jsdelivr.net/gh/Troy-OS/public@main/wallpapers/Stock-1.jpg"));
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+   background-attachment: fixed;
+   margin: 0;
+   padding: 0;
+   min-height: 100vh;
+}
+
 .material-symbols-outlined {
    font-variation-settings:
       "FILL" 0,
@@ -132,8 +144,8 @@ img {
    transition: all 0.2s ease;
 }
 
-.navbar-link {
-   margin-right: 5px;
+f-nav-right .navbar-link a {
+   display: none;
 }
 
 .navbar-link:hover > .settings-icon {
@@ -142,15 +154,15 @@ img {
 }
 
 @media (max-width: 768px) {
-   .f-nav-right .navbar-link an {
-      display: none;
-   }
-   .f-nav-right .fa-solid {
-      display: inline;
-   }
-   .f-nav-right .navbar-link {
-      font-size: 4.5vw;
-   }
+f-nav-right .navbar-link a {
+   display: none;
+}
+.f-nav-right .fa-solid {
+   display: inline;
+}
+.f-nav-right .navbar-link {
+   font-size: 4.5vw;
+}
 }
 
 @keyframes spin {

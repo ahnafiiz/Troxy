@@ -3,7 +3,7 @@
 
 :root {
    --background-base: #050816;
-   --background-image: url("https://cdn.jsdelivr.net/gh/Troy-OS/public@main/wallpapers/Stock-1.jpg");
+   --background-image: url("/tmp_troyos/public/wallpapers/Stock-1.jpg");
    --background-overlay: rgba(7, 13, 29, 0.88);
    --surface: rgba(11, 20, 38, 0.82);
    --surface-strong: rgba(11, 20, 38, 0.92);
@@ -105,7 +105,8 @@ body::before {
 .input-c input,
 .input-c select,
 .key-form,
-select {
+/* biome-ignore lint/style/noDescendingSpecificity: <explanation> */
+select  {
    width: 100%;
    border: 1px solid rgba(255, 255, 255, 0.14);
    border-radius: 18px;

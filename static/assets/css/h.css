@@ -73,10 +73,6 @@ input {
    height: 100%;
    top: 0vw;
    background-color: var(--bg-c);
-   background-repeat: no-repeat;
-   background-size: cover;
-   background-position: 50% 50%;
-   overflow: hidden;
 }
 
 .particles-js-canvas-el {

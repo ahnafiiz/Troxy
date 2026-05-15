@@ -10,6 +10,7 @@
     "start": "node index.js",
     "format": "pnpm biome format --write .",
     "precommit": "pnpm run format && pnpm biome check --write .",
+    "dev": "node index.js",
     "lint": "biome lint --write ."
   },
   "author": "Troxy",
