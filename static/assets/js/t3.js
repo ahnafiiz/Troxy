@@ -7,7 +7,7 @@ window.addEventListener("load", () => {
     form.addEventListener("submit", async event => {
       event.preventDefault();
       const formValue = input.value.trim();
-      const url = isUrl(formValue) ? prependHttps(formValue) : `https://search.brave.com/search?q=${formValue}`;
+      const url = isUrl(formValue) ? prependHttps(formValue) : getSearchUrl(formValue);
       await processUrl(url);
     });
   }
@@ -27,6 +27,10 @@ window.addEventListener("load", () => {
       }
     }
 
+    if (typeof __uv$config === "undefined" || !__uv$config.encodeUrl) {
+      throw new Error("Proxy not ready");
+    }
+
     return `/a/${__uv$config.encodeUrl(url)}`;
   }
 
@@ -34,26 +38,42 @@ window.addEventListener("load", () => {
     if (useScramjetPxy() && window.__isSj?.encodeUrl) {
       return window.__isSj.encodeUrl(url);
     }
-
     return `/a/${__uv$config.encodeUrl(url)}`;
   }
 
   async function processUrl(url) {
-    const pxyUrl = await getPxyUrl(url);
+    let pxyUrl;
+
+    for (let i = 0; i < 50; i++) {
+      try {
+        pxyUrl = await getPxyUrl(url);
+        if (pxyUrl) break;
+      } catch (_) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+    }
+
+    if (!pxyUrl) {
+      console.error("Proxy not ready after timeout");
+      return;
+    }
+
     sessionStorage.setItem("GoUrl", pxyUrl);
     const iframeContainer = document.getElementById("frame-container");
     const activeIframe = Array.from(iframeContainer.querySelectorAll("iframe")).find(iframe => iframe.classList.contains("active"));
+    if (!activeIframe) return;
     activeIframe.src = pxyUrl;
     activeIframe.dataset.tabUrl = url;
     input.value = url;
-    console.log(activeIframe.dataset.tabUrl);
   }
+
   function isUrl(val = "") {
     if (/^http(s?):\/\//.test(val) || (val.includes(".") && val.substr(0, 1) !== " ")) {
       return true;
     }
     return false;
   }
+
   function prependHttps(url) {
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       return `https://${url}`;
@@ -61,46 +81,71 @@ window.addEventListener("load", () => {
     return url;
   }
 
+  function getSearchUrl(query) {
+    const engine = localStorage.getItem("searchEngine") || "Google";
+    const engines = {
+      Google: "https://www.google.com/search?q=",
+      Bing: "https://www.bing.com/search?q=",
+      Brave: "https://search.brave.com/search?q=",
+      Qwant: "https://www.qwant.com/?q=",
+      Startpage: "https://www.startpage.com/search?q=",
+      SearchEncrypt: "https://www.searchencrypt.com/search?q=",
+      Ecosia: "https://www.ecosia.org/search?q=",
+    };
+    return (engines[engine] || engines.Google) + encodeURIComponent(query);
+  }
+
   window.__isGetPxyUrl = getPxyUrlSync;
+  window.__getSearchUrl = getSearchUrl;
 });
+
 document.addEventListener("DOMContentLoaded", event => {
   const addTabButton = document.getElementById("add-tab");
   const tabList = document.getElementById("tab-list");
   const iframeContainer = document.getElementById("frame-container");
   let tabCounter = 1;
+
   addTabButton.addEventListener("click", () => {
     createNewTab();
     Load();
   });
+
   function createNewTab() {
     const newTab = document.createElement("li");
     const tabTitle = document.createElement("span");
     const newIframe = document.createElement("iframe");
+
     newIframe.sandbox = "allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-modals allow-orientation-lock allow-presentation allow-storage-access-by-user-activation";
-    // When Top Navigation is not allowed links with the "top" value will be entirely blocked, if we allow Top Navigation it will overwrite the tab, which is obviously not wanted.
+
     tabTitle.textContent = `New Tab ${tabCounter}`;
     tabTitle.className = "t";
     newTab.dataset.tabId = tabCounter;
     newTab.addEventListener("click", switchTab);
     newTab.setAttribute("draggable", true);
+
     const closeButton = document.createElement("button");
     closeButton.classList.add("close-tab");
     closeButton.innerHTML = "&#10005;";
     closeButton.addEventListener("click", closeTab);
+
     newTab.appendChild(tabTitle);
     newTab.appendChild(closeButton);
     tabList.appendChild(newTab);
+
     const allTabs = Array.from(tabList.querySelectorAll("li"));
     for (const tab of allTabs) {
       tab.classList.remove("active");
     }
+
     const allIframes = Array.from(iframeContainer.querySelectorAll("iframe"));
     for (const iframe of allIframes) {
       iframe.classList.remove("active");
     }
+
     newTab.classList.add("active");
     newIframe.dataset.tabId = tabCounter;
     newIframe.classList.add("active");
+
     newIframe.addEventListener("load", () => {
       const title = newIframe.contentDocument.title;
       if (title.length <= 1) {
@@ -109,9 +154,7 @@ document.addEventListener("DOMContentLoaded", event => {
         tabTitle.textContent = title;
       }
       newIframe.contentWindow.open = url => {
-        const pxyUrl = window.__isGetPxyUrl
-          ? window.__isGetPxyUrl(url)
-          : `/a/${__uv$config.encodeUrl(url)}`;
+        const pxyUrl = window.__isGetPxyUrl ? window.__isGetPxyUrl(url) : `/a/${__uv$config.encodeUrl(url)}`;
         sessionStorage.setItem("URL", pxyUrl);
         createNewTab();
         return null;
@@ -121,18 +164,13 @@ document.addEventListener("DOMContentLoaded", event => {
       }
       Load();
     });
+
     const goUrl = sessionStorage.getItem("GoUrl");
     const url = sessionStorage.getItem("URL");
 
     const resolveStoredUrl = value => {
-      if (!value) {
-        return null;
-      }
-
-      if (value.startsWith("/")) {
-        return window.location.origin + value;
-      }
-
+      if (!value) return null;
+      if (value.startsWith("/")) return window.location.origin + value;
       return value;
     };
 
@@ -150,12 +188,6 @@ document.addEventListener("DOMContentLoaded", event => {
       if (url !== null) {
         newIframe.src = resolveStoredUrl(url);
         sessionStorage.removeItem("URL");
-      } else if (goUrl !== null) {
-        if (goUrl.includes("/e/")) {
-          newIframe.src = window.location.origin + goUrl;
-        } else {
-          newIframe.src = resolveStoredUrl(goUrl);
-        }
       } else {
         newIframe.src = "/";
       }
@@ -164,6 +196,7 @@ document.addEventListener("DOMContentLoaded", event => {
     iframeContainer.appendChild(newIframe);
     tabCounter += 1;
   }
+
   function closeTab(event) {
     event.stopPropagation();
     const tabId = event.target.closest("li").dataset.tabId;
@@ -194,6 +227,7 @@ document.addEventListener("DOMContentLoaded", event => {
       }
     }
   }
+
   function switchTab(event) {
     const tabId = event.target.closest("li").dataset.tabId;
     const allTabs = Array.from(tabList.querySelectorAll("li"));
@@ -218,6 +252,7 @@ document.addEventListener("DOMContentLoaded", event => {
       console.log("No selected iframe found with ID:", tabId);
     }
   }
+
   let dragTab = null;
   tabList.addEventListener("dragstart", event => {
     dragTab = event.target;
@@ -238,8 +273,10 @@ document.addEventListener("DOMContentLoaded", event => {
   tabList.addEventListener("dragend", () => {
     dragTab = null;
   });
+
   createNewTab();
 });
+
 // Reload
 function reload() {
   const activeIframe = document.querySelector("#frame-container iframe.active");
@@ -274,7 +311,6 @@ function popout() {
       style.width = style.height = "100%";
 
       newIframe.src = activeIframe.src;
-
       newWindow.document.body.appendChild(newIframe);
     }
   } else {
@@ -318,6 +354,7 @@ function eToggle() {
     erudaDocument.head.appendChild(script);
   }
 }
+
 // Fullscreen
 function FS() {
   const activeIframe = document.querySelector("#frame-container iframe.active");
@@ -331,37 +368,40 @@ function FS() {
     console.error("No active iframe found");
   }
 }
+
 const fullscreenButton = document.getElementById("fullscreen-button");
 fullscreenButton.addEventListener("click", FS);
+
 // Home
 function Home() {
   window.location.href = "./";
 }
 const homeButton = document.getElementById("home-page");
 homeButton.addEventListener("click", Home);
+
 // Back
 function goBack() {
   const activeIframe = document.querySelector("#frame-container iframe.active");
   if (activeIframe) {
     activeIframe.contentWindow.history.back();
-    iframe.src = activeIframe.src;
     Load();
   } else {
     console.error("No active iframe found");
   }
 }
+
 // Forward
 function goForward() {
   const activeIframe = document.querySelector("#frame-container iframe.active");
   if (activeIframe) {
     activeIframe.contentWindow.history.forward();
-    iframe.src = activeIframe.src;
     Load();
   } else {
     console.error("No active iframe found");
   }
 }
-// Remove Nav
+
+// Toggle tab strip visibility
 document.addEventListener("DOMContentLoaded", () => {
   const tb = document.getElementById("tabs-button");
   const nb = document.getElementById("right-side-nav");
@@ -369,24 +409,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const activeIframe = document.querySelector("#frame-container iframe.active");
     if (nb.style.display === "none") {
       nb.style.display = "";
-      activeIframe.style.top = "10%";
-      activeIframe.style.height = "90%";
+      if (activeIframe) {
+        activeIframe.style.top = "";
+        activeIframe.style.height = "";
+      }
       tb.querySelector("i").classList.remove("fa-magnifying-glass-plus");
       tb.querySelector("i").classList.add("fa-magnifying-glass-minus");
     } else {
       nb.style.display = "none";
-      activeIframe.style.top = "5%";
-      activeIframe.style.height = "95%";
+      if (activeIframe) {
+        activeIframe.style.top = "44px";
+        activeIframe.style.height = "calc(100% - 44px)";
+      }
       tb.querySelector("i").classList.remove("fa-magnifying-glass-minus");
       tb.querySelector("i").classList.add("fa-magnifying-glass-plus");
     }
   });
 });
+
 if (navigator.userAgent.includes("Chrome")) {
   window.addEventListener("resize", () => {
     navigator.keyboard.lock(["Escape"]);
   });
 }
+
 function Load() {
   const activeIframe = document.querySelector("#frame-container iframe.active");
   if (activeIframe && activeIframe.contentWindow.document.readyState === "complete") {
@@ -416,10 +462,9 @@ function Load() {
     }
   }
 }
+
 function decodeXor(input) {
-  if (!input) {
-    return input;
-  }
+  if (!input) return input;
   const [str, ...search] = input.split("?");
   return (
     decodeURIComponent(str)
