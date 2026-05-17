@@ -1,6 +1,6 @@
 self.__uv$config = {
   prefix: "/a/",
-  bare: "https://traitor-evoke-cleft.ngrok-free.dev/",
+  bare: "https://bare-server-node--ahnaftahmeed32.replit.app",
   encodeUrl: Ultraviolet.codec.xor.encode,
   decodeUrl: Ultraviolet.codec.xor.decode,
   handler: "/assets/mathematics/handler.js?v=9-30-2024",

@@ -27,7 +27,7 @@
       return `${protocol}://${location.host}/wisp/`;
     }
     // On Vercel: force HTTP to avoid CORS issues
-    return "ws://traitor-evoke-cleft.ngrok-free.dev/wisp/";
+    return "https://bare-server-node--ahnaftahmeed32.replit.app";
   }
 
   async function initSjTransport() {
