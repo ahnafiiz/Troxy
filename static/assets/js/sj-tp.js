@@ -26,10 +26,8 @@
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
       return `${protocol}://${location.host}/wisp/`;
     }
-
-    // Try these public bare servers in order
-    // bare.evals.net seems to have good WISP support
-    return "wss://bare.evals.net/wisp/";
+    // On Vercel: use ngrok Bare server
+    return "wss://traitor-evoke-cleft.ngrok-free.dev/wisp/";
   }
 
   async function initSjTransport() {

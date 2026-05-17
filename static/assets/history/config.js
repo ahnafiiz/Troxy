@@ -5,7 +5,7 @@ self.__dynamic$config = {
   logLevel: 0,
   bare: {
     version: 2,
-    path: "https://bare.evals.net/",
+    path: "https://traitor-evoke-cleft.ngrok-free.dev/",
   },
   tab: {
     title: null,
