@@ -22,7 +22,13 @@
 
   function getWispUrl() {
     const protocol = location.protocol === "https:" ? "wss" : "ws";
-    return `${protocol}://${location.host}/wisp/`;
+    // On Vercel: point to bare.math.rocks
+    // On localhost: use local /wisp/
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+      return `${protocol}://${location.host}/wisp/`;
+    }
+    // For production (Vercel), use the public Bare server
+    return "wss://bare.math.rocks/";
   }
 
   async function initSjTransport() {
@@ -30,10 +36,7 @@
       throw new Error("Sj bundle did not load.");
     }
 
-    const [{ BareMuxConnection }, { ScramjetController }] = await Promise.all([
-      import("/bm/index.mjs"),
-      Promise.resolve(window.$scramjetLoadController()),
-    ]);
+    const [{ BareMuxConnection }, { ScramjetController }] = await Promise.all([import("/bm/index.mjs"), Promise.resolve(window.$scramjetLoadController())]);
 
     const sj = new ScramjetController(sjConfig);
     await sj.init();
@@ -44,9 +47,9 @@
     window.__isSj = {
       connection,
       controller: sj,
-      encodeUrl: (url) => sj.encodeUrl(url),
-      decodeUrl: (url) => sj.decodeUrl(url),
-      pxyUrl: (url) => sj.encodeUrl(url),
+      encodeUrl: url => sj.encodeUrl(url),
+      decodeUrl: url => sj.decodeUrl(url),
+      pxyUrl: url => sj.encodeUrl(url),
     };
   }
 
@@ -60,9 +63,13 @@
 
   if (document.readyState === "loading") {
     window.__isSjReady = new Promise(resolve => {
-      document.addEventListener("DOMContentLoaded", () => {
-        void boot().finally(resolve);
-      }, { once: true });
+      document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+          void boot().finally(resolve);
+        },
+        { once: true },
+      );
     });
   } else {
     window.__isSjReady = boot();
