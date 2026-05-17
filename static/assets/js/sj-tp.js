@@ -20,15 +20,14 @@
     },
   };
 
-  function getWispUrl() {
+function getWispUrl() {
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
     const protocol = location.protocol === "https:" ? "wss" : "ws";
-    // On localhost: use local /wisp/
-    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-      return `${protocol}://${location.host}/wisp/`;
-    }
-    // On Vercel: use Replit Bare server with wss:// (secure websocket)
-    return "wss://bare-server-node.ahnaftahmeed32.replit.dev/wisp/";
+    return `${protocol}://${location.host}/wisp/`;
   }
+  // Try HTTP instead of HTTPS
+  return "ws://bare-server-node.ahnaftahmeed32.replit.dev/wisp/";
+}
 
   async function initSjTransport() {
     if (typeof window.$scramjetLoadController !== "function") {
