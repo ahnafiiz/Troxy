@@ -26,8 +26,8 @@
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
       return `${protocol}://${location.host}/wisp/`;
     }
-    // On Vercel: force HTTP to avoid CORS issues
-    return "https://bare-server-node--ahnaftahmeed32.replit.app";
+    // On Vercel: use Replit production URL
+    return "wss://bare-server-node-ahnaftahmeed32.replit.app/wisp/";
   }
 
   async function initSjTransport() {
