@@ -28,7 +28,7 @@
       return `${protocol}://${location.host}/wisp/`;
     }
     // For production (Vercel), use the public Bare server
-    return "wss://bare.math.rocks/";
+    return "wss://shuttle.teaspoon.cloud/wisp/";
   }
 
   async function initSjTransport() {
