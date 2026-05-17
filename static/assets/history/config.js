@@ -5,7 +5,7 @@ self.__dynamic$config = {
   logLevel: 0,
   bare: {
     version: 2,
-    path: "https://troy-wisp-production.up.railway.app/",
+    path: "https://uv.holyubofficial.net/",
   },
   tab: {
     title: null,
