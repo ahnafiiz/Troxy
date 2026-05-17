@@ -27,7 +27,7 @@
       return `${protocol}://${location.host}/wisp/`;
     }
     // On Vercel: use Replit production URL
-    return "wss://bare-server-node-ahnaftahmeed32.replit.app/wisp/";
+    return "https://bare-server-node--ahnaftahmeed32.replit.app";
   }
 
   async function initSjTransport() {
