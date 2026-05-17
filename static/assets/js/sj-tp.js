@@ -21,18 +21,13 @@
   };
 
   function getWispUrl() {
+    const protocol = location.protocol === "https:" ? "wss" : "ws";
     // On localhost: use local /wisp/
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-      const protocol = location.protocol === "https:" ? "wss" : "ws";
       return `${protocol}://${location.host}/wisp/`;
     }
-
-    // On production (HTTPS): MUST use wss://
-    // Try multiple Bare servers that support WISP over WSS
-    const servers = ["wss://bare.math.rocks/wisp/", "wss://shuttle.teaspoon.cloud/wisp/", "wss://bare.evals.net/wisp/"];
-
-    // Return the first one (you can rotate through them if needed)
-    return servers[0];
+    // On Vercel: use Replit Bare server with wss:// (secure websocket)
+    return "wss://bare-server-node.ahnaftahmeed32.replit.dev/wisp/";
   }
 
   async function initSjTransport() {

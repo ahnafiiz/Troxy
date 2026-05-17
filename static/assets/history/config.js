@@ -5,7 +5,7 @@ self.__dynamic$config = {
   logLevel: 0,
   bare: {
     version: 2,
-    path: "https://bare.math.rocks/",
+    path: "https://bare-server-node.ahnaftahmeed32.replit.dev/",
   },
   tab: {
     title: null,
