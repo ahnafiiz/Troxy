@@ -26,7 +26,7 @@
       return `${protocol}://${location.host}/wisp/`;
     }
     // PUBLIC WISP SERVER - THIS WORKS!
-    return "wss://wisp.nebula.bio/";
+    return "wss://troy-wisp-production.up.railway.app/wisp/";
   }
 
   async function initSjTransport() {
