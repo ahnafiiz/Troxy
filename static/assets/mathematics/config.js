@@ -1,6 +1,6 @@
 self.__uv$config = {
   prefix: "/a/",
-  bare: "https://shuttle.teaspoon.cloud/",
+  bare: "https://bare.evals.net/",
   encodeUrl: Ultraviolet.codec.xor.encode,
   decodeUrl: Ultraviolet.codec.xor.decode,
   handler: "/assets/mathematics/handler.js?v=9-30-2024",

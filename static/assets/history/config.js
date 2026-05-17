@@ -5,7 +5,7 @@ self.__dynamic$config = {
   logLevel: 0,
   bare: {
     version: 2,
-    path: "https://shuttle.teaspoon.cloud/",
+    path: "https://bare.evals.net/",
   },
   tab: {
     title: null,

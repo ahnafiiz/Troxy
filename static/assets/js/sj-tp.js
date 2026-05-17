@@ -27,9 +27,9 @@
       return `${protocol}://${location.host}/wisp/`;
     }
 
-    // On production: use stable public Bare servers
-    // These are maintained by the community
-    return "wss://shuttle.teaspoon.cloud/wisp/";
+    // Try these public bare servers in order
+    // bare.evals.net seems to have good WISP support
+    return "wss://bare.evals.net/wisp/";
   }
 
   async function initSjTransport() {
