@@ -26,7 +26,7 @@
       return `${protocol}://${location.host}/wisp/`;
     }
     // PUBLIC WISP SERVER - THIS WORKS!
-    return "wss://wisp.mercurywork.shop/";
+    return "wss://wisp.nebula.bio/";
   }
 
   async function initSjTransport() {
