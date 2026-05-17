@@ -1,6 +1,6 @@
 self.__uv$config = {
   prefix: "/a/",
-  bare: "wss://troy-wisp-production.up.railway.app/wisp/",
+  bare: "https://troy-wisp-production.up.railway.app/",
   encodeUrl: Ultraviolet.codec.xor.encode,
   decodeUrl: Ultraviolet.codec.xor.decode,
   handler: "/assets/mathematics/handler.js?v=9-30-2024",
