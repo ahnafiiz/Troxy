@@ -20,14 +20,17 @@
     },
   };
 
-function getWispUrl() {
-  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+  function getWispUrl() {
     const protocol = location.protocol === "https:" ? "wss" : "ws";
-    return `${protocol}://${location.host}/wisp/`;
+    // On localhost: use local /wisp/
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+      return `${protocol}://${location.host}/wisp/`;
+    }
+
+    // On production: use stable public Bare servers
+    // These are maintained by the community
+    return "wss://shuttle.teaspoon.cloud/wisp/";
   }
-  // Try HTTP instead of HTTPS
-  return "ws://bare-server-node.ahnaftahmeed32.replit.dev/wisp/";
-}
 
   async function initSjTransport() {
     if (typeof window.$scramjetLoadController !== "function") {
