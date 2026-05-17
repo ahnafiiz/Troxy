@@ -26,8 +26,8 @@
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
       return `${protocol}://${location.host}/wisp/`;
     }
-    // On Vercel: try WSS with correct double-dash URL
-    return "wss://bare-server-node--ahnaftahmeed32.replit.app/wisp/";
+    // On Vercel: use Replit on port 8080
+    return "wss://bare-server-node--ahnaftahmeed32.replit.app:8080/wisp/";
   }
 
   async function initSjTransport() {
