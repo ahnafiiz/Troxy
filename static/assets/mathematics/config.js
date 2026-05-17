@@ -1,10 +1,26 @@
-self.__uv$config = {
-  prefix: "/a/",
-  bare: "/ca/",
-  encodeUrl: Ultraviolet.codec.xor.encode,
-  decodeUrl: Ultraviolet.codec.xor.decode,
-  handler: "/assets/mathematics/handler.js?v=9-30-2024",
-  bundle: "/assets/mathematics/bundle.js?v=9-30-2024",
-  config: "/assets/mathematics/config.js?v=9-30-2024",
-  sw: "/assets/mathematics/sw.js?v=9-30-2024",
+self.__dynamic$config = {
+  prefix: "/a/q/",
+  encoding: "xor",
+  mode: "production",
+  logLevel: 0,
+  bare: {
+    version: 2,
+    path: "/ca/",
+  },
+  tab: {
+    title: null,
+    icon: null,
+    ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.3",
+  },
+  assets: {
+    prefix: "/assets/history/",
+    files: {
+      handler: "handler.js?v=2025-04-15",
+      client: "client.js?v=12",
+      worker: "worker.js?v=12",
+      config: "config.js?v=2025-04-15",
+      inject: "",
+    },
+  },
+  block: [],
 };
