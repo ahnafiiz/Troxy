@@ -22,12 +22,12 @@
 
   function getWispUrl() {
     const protocol = location.protocol === "https:" ? "wss" : "ws";
-    // On localhost: use local /wisp/
+    // On localhost: use local wisp
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-      return `${protocol}://${location.host}/wisp/`;
+      return `${protocol}://${location.host}/`;
     }
-    // On Vercel: use Replit on port 8080
-    return "wss://bare-server-node--ahnaftahmeed32.replit.app:8080/wisp/";
+    // On Vercel: use Replit (no port, no /wisp/ path)
+    return "wss://bare-server-node--ahnaftahmeed32.replit.app/";
   }
 
   async function initSjTransport() {
@@ -55,6 +55,7 @@
   async function boot() {
     try {
       await initSjTransport();
+      console.log("Scramjet transport initialized successfully");
     } catch (error) {
       console.error("Failed to initialize sj transport:", error);
     }
